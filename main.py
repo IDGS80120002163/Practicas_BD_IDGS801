@@ -1,4 +1,4 @@
-from flask import Flask,render_template,request, flash, g
+from flask import Flask,render_template,request, flash, g, redirect, url_for
 from flask_wtf.csrf import CSRFProtect
 import forms
 from config import DevelopmentConfig
@@ -26,6 +26,52 @@ def index():
           db.session.add(emp)
           db.session.commit()
      return render_template('index.html', form = create_form)
+ 
+@app.route('/eliminar',methods=['GET', 'POST'])
+def eliminar():
+    create_form = forms.UserForm(request.form)
+    if request.method == 'GET':
+         id = request.args.get('id')
+         emp1 = db.session.query(Empleados).filter(Empleados.id == id).first()
+         create_form.id.data = request.args.get('id') #id = request.args.get('id')
+         create_form.nombre.data = emp1.nombre
+         create_form.direccion.data = emp1.direccion
+         create_form.telefono.data = emp1.telefono
+         create_form.correo.data = emp1.correo
+         create_form.sueldo.data = emp1.sueldo
+    if request.method == 'POST':
+         id = create_form.id.data
+         emp = Empleados.query.get(id)
+         db.session.delete(emp)
+         db.session.commit()
+         return redirect(url_for('ABCompleto'))
+    return render_template('eliminar.html', form=create_form)
+
+@app.route('/modificar',methods=['GET', 'POST'])
+def modificar():
+    create_form = forms.UserForm(request.form)
+    if request.method == 'GET':
+         id = request.args.get('id')
+         emp1 = db.session.query(Empleados).filter(Empleados.id == id).first()
+         create_form.id.data = request.args.get('id') #id = request.args.get('id')
+         create_form.nombre.data = emp1.nombre
+         create_form.direccion.data = emp1.direccion
+         create_form.telefono.data = emp1.telefono
+         create_form.correo.data = emp1.correo
+         create_form.sueldo.data = emp1.sueldo
+    if request.method == 'POST':
+         id = create_form.id.data
+         emp1 = db.session.query(Empleados).filter(Empleados.id == id).first()
+         emp1.nombre = create_form.nombre.data
+         emp1.direccion = create_form.direccion.data
+         emp1.telefono = create_form.telefono.data
+         emp1.correo = create_form.correo.data
+         emp1.sueldo = create_form.sueldo.data
+         #emp = Empleados.query.get(id)
+         db.session.add(emp1)
+         db.session.commit()
+         return redirect(url_for('ABCompleto'))
+    return render_template('modificar.html', form=create_form) 
  
 @app.route("/empleado_tabla", methods=["GET", "POST"])
 def ABCompleto():
