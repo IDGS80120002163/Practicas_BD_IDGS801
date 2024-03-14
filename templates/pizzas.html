@@ -1,0 +1,187 @@
+{% extends "layout2.html" %}
+{% block container %}
+{% import "_macros.html" as macros %}
+<div class="col-md-6">
+    <h2>Venta de pizzas</h2>
+    <form action="pizzas" method="POST" novalidate>
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <div class="row">
+            <div class="form-group col-xs-12 col-md-4 floating-label-form-group controls">
+                {{macros.camposNuevos(form.nombre_completo, class='form-control')}}
+            </div>
+            <div class="form-group col-xs-12 col-md-4 floating-label-form-group controls">
+                {{macros.camposNuevos(form.direccion, class='form-control')}}
+            </div>
+            <div class="form-group col-xs-12 col-md-4 floating-label-form-group controls">
+                {{macros.camposNuevos(form.telefono, class='form-control')}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-12 col-md-4 floating-label-form-group controls">
+                {{macros.camposNuevos(form.fecha_compra, class='form-control')}}
+            </div>
+            <div class="form-group col-xs-12 col-md-4 floating-label-form-group controls">
+                {{macros.camposNuevos(form.tamanio_pizza, class='form-control')}}
+            </div>
+            <div class="form-group col-xs-12 col-md-4 floating-label-form-group controls">
+                {{macros.camposNuevos(form.cantidad_pizzas, class='form-control')}}
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col-xs-12 floating-label-form-group controls">
+                <label>Ingredientes Pizza</label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="ingredientes_pizza" value="Jamon"> Jamon
+                </label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="ingredientes_pizza" value="Pina"> Piña
+                </label>
+                <label class="checkbox-inline">
+                    <input type="checkbox" name="ingredientes_pizza" value="Champinon"> Champiñón
+                </label>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row control-group">
+                <div class="form-group col-xs-12 floating-label-form-group controls">
+                    <input type="submit" id="btn1" name="btn1" value="Mandar al carrito" class="btn btn-success">
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th style="display: none;">Nombre</th>
+                        <th style="display: none;">Dirección</th>
+                        <th style="display: none;">Teléfono</th>
+                        <th style="display: none;">Fecha</th>
+                        <th>Tamaño</th>
+                        <th>Ingredientes</th>
+                        <th>Cantidad</th>
+                        <th>Total</th>
+                        <th>Eliminar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ve_re in ventas_registradas [1:] %}
+                    <tr>
+                        <td style="display: none;">{{ ve_re[0] }}</td>
+                        <td style="display: none;">{{ ve_re[1] }}</td>
+                        <td style="display: none;">{{ ve_re[2] }}</td>
+                        <td style="display: none;">{{ ve_re[3] }}</td>
+                        <td>{{ ve_re[4] }}</td>
+                        <td>{{ ve_re[5] }}</td>
+                        <td>{{ ve_re[6] }}</td>
+                        <td>{{ ve_re[7] }}</td>
+                        <td> <input type="submit" id="btn4" name="btn4" value="{{ loop.index }}" class="btn btn-warning">                       </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="container">
+                <div class="row control-group">
+                    <div class="form-group col-xs-12 floating-label-form-group controls">
+                        <input type="submit" id="btn2" name="btn2" value="Registrar" class="btn btn-primary">
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="container row">
+            <div class="form-group col-xs-12 col-md-4 floating-label-form-group controls">
+                <td><label for="filtro_dia">Día</label></td>
+                <dd><input class="form-control" id="filtro_dia" name="filtro_dia" required type="text"></dd>
+                <td><label for="filtro_dia">Mes</label></td>
+                <dd><input class="form-control" id="filtro_mes" name="filtro_mes" required type="text"></dd>
+            </div>
+            <input type="submit" id="btn3" name="btn3" value="Filtrar" class="btn btn-primary">
+        </div>
+        <div class="col-md-6">
+            <h3>Tabla de todas las ventas</h3>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Fecha de Compra</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ven in venta %}
+                    <tr>
+                        <td>{{ ven.nombre_completo }}</td>
+                        <td>{{ ven.fecha_compra }}</td>
+                        <td>{{ ven.total_venta }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if totalventas %}
+                <h2>Total: {{ totalventas }}</h2>
+            {%else%}
+                <h2>Aún no hay ventas</h2>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h3>Tabla de ventas del mes</h3>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Fecha de Compra</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if filtromes %}
+                        {% for mes in filtromes %}
+                        <tr>
+                            <td>{{ mes.nombre_completo }}</td>
+                            <td>{{ mes.fecha_compra }}</td>
+                            <td>{{ mes.total_venta }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <p>No hay ventas para el mes seleccionado.</p>
+                    {% endif %}
+                </tbody>                
+            </table>
+            {% if totalventasmes %}
+                <h2>Total: {{ totalventasmes }}</h2>
+            {%else%}
+                <h2>Aún no hay ventas</h2>
+            {% endif %}
+        </div>
+        <div class="col-md-6">
+            <h3>Tabla de ventas del día</h3>
+            <table class="table table-striped table-bordered">
+                <thead>
+                    <tr>
+                        <th>Nombre</th>
+                        <th>Fecha de Compra</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if filtrodia %}
+                        {% for dia in filtrodia %}
+                        <tr>
+                            <td>{{ dia.nombre_completo }}</td>
+                            <td>{{ dia.fecha_compra }}</td>
+                            <td>{{ dia.total_venta }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <p>No hay ventas para el dia seleccionado.</p>
+                    {% endif %}
+                </tbody>
+            </table>
+            {% if totalventasdia %}
+                <h2>Total: {{ totalventasdia }}</h2>
+            {%else%}
+                <h2>Aún no hay ventas</h2>
+            {% endif %}
+        </div>
+    </form>
+</div>
+{% endblock %}
